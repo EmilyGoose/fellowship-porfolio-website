@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Kill existing tmux sessions
+tmux kill-server
+
 # Make sure site is up to date from VCS
 git fetch && git reset origin/main --hard
 
