@@ -44,7 +44,8 @@ mydb.create_tables([TimelinePost])
 nav_bar = Navbar('Navigation',
                  View('Home', 'index'),
                  View('Work Experience', 'experience'),
-                 View('Hobbies', 'hobbies')
+                 View('Hobbies', 'hobbies'),
+                 View('Timeline', 'timeline')
                  )
 
 # Initialize and register Nav library
@@ -82,6 +83,11 @@ def hobbies():
     return render_template('hobbies.html', json_data=json_data, title="Hobbies", url=os.getenv("URL"))
 
 
+@app.route('/timeline')
+def timeline():
+    return render_template('timeline.html', title="Timeline", posts=get_posts()['timeline_posts'])
+
+
 # This route is only used in an iframe, so it doesn't need to be on the navbar
 @app.route('/map')
 def travel_map():
@@ -91,6 +97,7 @@ def travel_map():
 # Create post endpoint
 @app.route('/api/timeline_post', methods=['POST'])
 def post_post():
+    print(request.values.to_dict())
     name = request.form['name']
     email = request.form['email']
     content = request.form['content']
@@ -100,7 +107,7 @@ def post_post():
 
 
 @app.route('/api/timeline_post', methods=['GET'])
-def get_post():
+def get_posts():
     return {
         'timeline_posts': [
             model_to_dict(p)
