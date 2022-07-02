@@ -99,7 +99,7 @@ def post_post():
     return model_to_dict(timeline_post)
 
 
-@app.route('api/timeline_post', methods=['GET'])
+@app.route('/api/timeline_post', methods=['GET'])
 def get_post():
     return {
         'timeline_posts': [
