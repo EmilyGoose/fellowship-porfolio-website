@@ -3,11 +3,8 @@
 # Make sure site is up to date from VCS
 git fetch && git reset origin/main --hard
 
-# Enter python venv and install dependencies
-source python3-virtualenv/bin/activate
+# Spin existing containers down
+docker compose -f docker-compose.prod.yml down
 
-# Install requirements
-python3.8 -m pip install -r requirements.txt
-
-# Restart myportfolio service
-systemctl restart myportfolio
+# Build & spin up site
+docker compose -f docker-compose.prod.yml up -d --build
