@@ -17,7 +17,7 @@ class AppTestCase(unittest.TestCase):
         
         # Make sure content is properly returned
         html = response.get_data(as_text=True)
-        assert "<title>MLH Fellow</title>" in html
+        assert "<title>About Us</title>" in html
 
     def test_timeline(self):
         response = self.client.get("/api/timeline_post")
