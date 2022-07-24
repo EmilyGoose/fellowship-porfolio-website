@@ -1,0 +1,24 @@
+textarea {
+    border: none;
+}
+
+#content {
+    width: 100%;
+}
+
+.timeline_column {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    max-width: 40%;
+}
+
+.timeline_form {
+    width: 100%
+}
+
+.form_item {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
