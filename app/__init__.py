@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request
 from flask_nav import Nav, register_renderer
 from flask_nav.elements import Navbar, View
+from jinja2 import TemplateNotFound
 from peewee import MySQLDatabase, SqliteDatabase, Model, DateTimeField, TextField, CharField
 import datetime
 
@@ -27,7 +28,7 @@ else:
         password=os.getenv("MYSQL_PASSWORD"),
         host=os.getenv("MYSQL_HOST"),
         port=3306
-    )   
+    )
 
 
 class TimelinePost(Model):
@@ -63,13 +64,18 @@ register_renderer(app, 'navbar', NavbarRenderer)
 json_path = os.path.join(app.root_path, "static/data", "group.json")
 json_data = json.load(open(json_path))
 
-# Check if templates/generated exists, if not create the folder
-folder_path = os.path.join(app.root_path, "templates/generated")
-if not os.path.isdir(folder_path):
-    os.mkdir(folder_path)
-
 # Generate the Folium map HTML
-generate_map(os.path.join(app.root_path, "templates/generated", "generated_map.html"), json_data)
+# This takes a while so SKIP_MAP variable is useful when testing quick changes
+if os.getenv("SKIP_MAP") == "true":
+    print("Testing mode, skipping map generation")
+else:
+    print("Generating map")
+    # Check if templates/generated exists, if not create the folder
+    folder_path = os.path.join(app.root_path, "templates/generated")
+    if not os.path.isdir(folder_path):
+        os.mkdir(folder_path)
+    generate_map(os.path.join(app.root_path, "templates/generated", "generated_map.html"), json_data)
+    print("Map generated")
 
 
 @app.route('/')
@@ -95,7 +101,13 @@ def timeline():
 # This route is only used in an iframe, so it doesn't need to be on the navbar
 @app.route('/map')
 def travel_map():
-    return render_template('generated/generated_map.html')
+    try:
+        return render_template('generated/generated_map.html')
+    except TemplateNotFound:
+        # Map hasn't been generated, print out some info
+        print("Map failed to generate or map generation is disabled")
+        print("SKIP_MAP is set to " + str(os.getenv("SKIP_MAP")))
+        return "Failed to generate map or map generation is disabled. Check app logs for more info."
 
 
 # Create post endpoint
